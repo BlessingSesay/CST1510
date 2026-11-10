@@ -2,9 +2,9 @@
 RECORD CHECK  -  my version
 ===========================
 
-Name  :
-Lane  :  AI / Cyber / IT      (delete two)
-Date  :
+Name  : Blessing Sesay
+Lane  : AI
+Date  : 10/11/2026
 
 Run it:   python template.py
 
@@ -13,47 +13,69 @@ Delete these instructions as you replace them with your code.
 """
 
 # =================================================================== FUNCTIONS
-# 1. Write parse_line(raw_line) that cleans and parses one raw, messy line
-#    into a dict. Handle inconsistent spacing and case - that is the whole
-#    point of this week.
-#
-#    Typical and above: also write status_of(...), shaped for your lane
-#    (e.g. OVER LIMIT / WARNING / OK, or FLAGGED / OK). Give both a
-#    one-line docstring.
+def parse_line(raw_line: str) -> dict:
+    """Clean and parse a raw messy line into a dictionary."""
+    cleaned_line = raw_line.strip()
+    if not cleaned_line:
+        return {}
+    
+    parts = cleaned_line.split(",")
+    record = {}
+    
+    for i, part in enumerate(parts):
+        part = part.strip()
+        if "=" in part:
+            key, val = part.split("=", 1)
+            key = key.strip().lower()
+            val = val.strip().lower()
+            try:
+                val = int(val)
+            except ValueError:
+                try:
+                    val = float(val)
+                except ValueError:
+                    pass
+            record[key] = val
+        else:
+            if i == 0:
+                record["survey"] = part.lower()
+            else:
+                record[f"field_{i}"] = part.lower()
+                
+    return record
 
-# your function(s) go here
-
-
+def status_of(record: dict) -> str:
+    """Evaluate record fields and return FLAGGED or OK status."""
+    rating = record.get("rating", 5)
+    age = record.get("age", 25)
+    
+    if rating < 3 or age < 18:
+        return "FLAGGED"
+    return "OK"
 # ====================================================================== INPUT
-# 2. Your raw, messy records - at least 5, deliberately varied in spacing
-#    and case. Match the shape to your lane:
-#
-#    AI / Data Science : "  Survey_2026 , rating=4 , age=23  "
-#    Cyber Security     : "SRC=10.0.0.5,ATTEMPTS=12,RESULT=FAILED"
-#    IT                  : "  Srv-01 , used=87 , total=100  "
-#
-#    Excellent: save these lines to a file and load them with open() /
-#    a for loop over the file, instead of writing them directly here.
+filename = "records.txt"
+raw_records = []
 
-raw_records = []   # replace with your code
-
-
+try:
+    with open(filename, "r") as file:
+        raw_records = file.readlines()
+except FileNotFoundError:
+    print(f"Error: '{filename}' was not found. Please create it in the LAB folder.")
 # =============================================================== PROCESS + OUTPUT
-# 3. Parse and report on every record.
-#
-#    Threshold : parse each record, print the cleaned dict.
-#    Typical   : also call status_of(...) for each, print it alongside.
-#    Excellent : print a one-line summary at the end - how many records,
-#                how many flagged.
+total_records = 0
+flagged_count = 0
 
 for raw_record in raw_records:
-    pass   # replace with your code
-
-
+    if not raw_record.strip():
+        continue
+    
+    total_records += 1
+    cleaned_dict = parse_line(raw_record)
+    status = status_of(cleaned_dict)
+    
+    if status == "FLAGGED":
+        flagged_count += 1
+        
+    print(f"Cleaned: {cleaned_dict} | Status: {status}")
 # ==========================================================================
-# 4. Before you finish:
-#
-#    [ ] Run it against at least 5 genuinely messy raw records
-#    [ ] Run it with a value that will not convert to a number - write the
-#        error down
-#    [ ] Check every function does one job, with a docstring
+print(f"\nSummary: Processed {total_records} records, {flagged_count} flagged.")
