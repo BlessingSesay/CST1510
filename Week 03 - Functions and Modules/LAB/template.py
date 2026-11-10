@@ -2,9 +2,9 @@
 RECORD CHECK  -  my version
 ===========================
 
-Name  :
-Lane  :  AI / Cyber / IT      (delete two)
-Date  :
+Name  : Blessing Sesay
+Lane  :  AI
+Date  : 15/10/2026
 
 Run it:   python template.py
 
@@ -27,7 +27,21 @@ Delete these instructions as you replace them with your code.
 #    Give each function a one-line docstring saying what it does.
 
 # your function(s) go here
+def status_of(percent):
+    """Return status based on percentage threshold."""
+    if percent >= 100:
+        return "OVER LIMIT"
+    elif percent >= 90:
+        return "WARNING"
+    else:
+        return "OK"
 
+
+def check(value, limit):
+    """Calculate and return difference and percentage."""
+    difference = limit - value
+    percent = (value / limit) * 100
+    return difference, percent
 
 # ==================================================================== INPUT
 # 2. Ask for your three values.
@@ -36,10 +50,9 @@ Delete these instructions as you replace them with your code.
 #    - the second is a NUMBER (use float(), not int())
 #    - the third  is a NUMBER (use float(), not int())
 
-label = ""      # replace with an input() call
-value = 0.0     # replace with an input() call, converted
-limit = 0.0     # replace with an input() call, converted
-
+label = input("Enter dataset name: ")
+value = float(input("Enter rows loaded: "))
+limit = float(input("Enter rows expected: "))
 
 # ================================================================== PROCESS
 # 3. Work out the difference, the percentage, and the status.
@@ -48,9 +61,10 @@ limit = 0.0     # replace with an input() call, converted
 #                difference and percentage inline, not in a function.
 #    Typical   : call check() to get the difference and percentage instead.
 
-difference = 0.0   # replace with your code
-percent = 0.0       # replace with your code
-status = ""          # replace with your code
+results = check(value, limit)
+difference = results[0]
+percent = results[1]
+status = status_of(percent)
 
 
 # =================================================================== OUTPUT
@@ -68,16 +82,9 @@ print()
 print("=" * 34)
 print(f"  RECORD CHECK  -  {label}")
 print("=" * 34)
-
-# your report lines go here
-
+print(f"Rows Loaded  : {value:>8.2f}")
+print(f"Rows Expected: {limit:>8.2f}")
+print(f"Difference   : {difference:>8.2f}")
+print(f"Percent      : {percent:>8.2f} %")
+print(f"Status       : {status:>8}")
 print("=" * 34)
-
-
-# ==========================================================================
-# 5. Before you finish:
-#
-#    [ ] Run it three times with different numbers
-#    [ ] Run it with a total of 0 and note the error (do not fix it yet)
-#    [ ] Check every function does one job - if a function both calculates
-#        and prints, split it
